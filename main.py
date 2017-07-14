@@ -39,7 +39,7 @@ class User(db.Model):
 @app.before_request
 def require_login():
 
-    allowed_routes = ['login', 'signUp']
+    allowed_routes = ['login', 'signUp', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -80,8 +80,6 @@ def signUp():
         username = request.form['username']
         password = request.form['password']
         verify = request.form['verify']
-    
-
 
         if len(username) == 0 or len(username) < 3:
             username_error = 'Invalid Username'
