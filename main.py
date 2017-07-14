@@ -114,7 +114,8 @@ def logout():
 @app.route('/', methods=['POST','GET'])
 def index():
 
-    return redirect('/blog')
+    users = User.query.all()
+    return render_template('index.html', users=users)
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
@@ -149,7 +150,7 @@ def addBlogEntry():
            
             return render_template('singleBlogEntries.html', blog=new_blog, owner=owner)   
     
-    blogs = Blog.query.filter_by(completed=False,owner=owner).all()
+    blogs = Blog.query.filter_by(submitted=False,owner=owner).all()
     return render_template('addBlogEntry.html', title_error=title_error, blog_error=blog_error, owner=owner, blogs=blogs)
 
 
