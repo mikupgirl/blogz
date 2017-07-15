@@ -64,8 +64,6 @@ def login():
 
 @app.route('/signUp', methods=['POST', 'GET'])
 def signUp():
-    username_error = ''
-    password_error = ''
     verify_error = ''
 
     if request.method == 'POST':
@@ -75,14 +73,16 @@ def signUp():
         
 
         existing_user = User.query.filter_by(username=username).first()
-
         if not existing_user:
-            new_user = User(username, password)
-            db.session.add(new_user)
-            db.session.commit()
+            if verify != password:
+                flash('Passwords do not match', 'error')
+            else:
+                new_user = User(username, password)
+                db.session.add(new_user)
+                db.session.commit()
 
-            session['username'] = username
-            return redirect('/blog')
+                session['username'] = username
+                return redirect('/blog')
         else:
             flash('Duplicate User', 'error')
 
