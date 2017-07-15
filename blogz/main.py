@@ -63,24 +63,17 @@ def login():
 
 
 @app.route('/signUp', methods=['POST', 'GET'])
-<<<<<<< HEAD
-def signUp():   
-=======
 def signUp():
     username_error = ''
     password_error = ''
     verify_error = ''
->>>>>>> a570107cee8428812dc3fa1a5a42bfb82fe000a4
 
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-<<<<<<< HEAD
         verify = request.form['verify']
         
-=======
 
->>>>>>> a570107cee8428812dc3fa1a5a42bfb82fe000a4
         existing_user = User.query.filter_by(username=username).first()
 
         if not existing_user:
