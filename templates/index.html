@@ -4,8 +4,12 @@
 
     <h1 style="text-align: center">Usernames:</h1>
 
-    {% for user in users %}
-        <h1><a href="singleBlogs?id={{user.id}}">{{user.username}}</a></h1>
-    {% endfor %}
 
+    {% if users|length == 0 %}
+        <p>No userss yet</p>
+    {% else %}
+    {% for user in users %}
+        <h1><a href="blog?id={{ user.id }}">{{ user.username }}</a></h1>
+    {% endfor %}
+{% endif %}
 {% endblock %}
