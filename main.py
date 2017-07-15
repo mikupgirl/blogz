@@ -1,6 +1,5 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from hashutils import make_pw_hash, check_pw_hash
 
 app = Flask(__name__)
 app.config['DEBUG'] =  True
@@ -29,12 +28,12 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
-    pw_hash = db.Column(db.String(120))
+    password = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref='owner')
 
     def __init__(self, username, password):
         self.username = username
-        self.pw_hash = make_pw_hash(password)
+        self.password = password
 
 @app.before_request
 def require_login():
@@ -54,20 +53,15 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         
-        if len(username) == 0:
-            username_error = 'Please enter your username'
-
-        if len(password) == 0:
-            password_error = 'Please enter your password'
-        
-        if not username_error and not password_error:
+        if user and user.password == password:
             session['username'] = username
             flash("Logged in")
             return redirect('/blog')
         else:
             flash('User password incorrect, or user does not exist', 'error')
+
             
-    return render_template('login.html', username_error=username_error, password_error=password_error)
+    return render_template('login.html')
 
 @app.route('/signUp', methods=['POST', 'GET'])
 def signUp():
@@ -81,29 +75,27 @@ def signUp():
         password = request.form['password']
         verify = request.form['verify']
 
-        if len(username) == 0 or len(username) < 3:
-            username_error = 'Invalid Username'
+        #if len(username) == 0 or len(username) < 3:
+            #username_error = 'Invalid Username'
 
-        if len(password) == 0 or len(password) < 3:
-            password_error = 'Invalid Password'
+        #if len(password) == 0 or len(password) < 3:
+            #password_error = 'Invalid Password'
 
-        if str(verify) != str(password):
-            verify_error = 'Passwords do not match.'
+        #if str(verify) != str(password):
+            #verify_error = 'Passwords do not match.'
         
         existing_user = User.query.filter_by(username=username).first()
 
-        if not username_error and not password_error and not verify_error:
-        
+        if not existing_user:
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
             return redirect('/blog')
         else:
-            if existing_user:
-                flash('Duplicate User', 'error')
+            flash('Duplicate User', 'error')
 
-    return render_template('signup.html', verify_error=verify_error, password_error=password_error, username_error=username_error)
+    return render_template('signup.html')
 
 @app.route('/logout')
 def logout():
@@ -120,8 +112,13 @@ def index():
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 
+    #change the get arguments below to fit with the user class, and replace users=users with the blog=blog value, which you'll change   
+    #user_Id = request.args.get("id") #gets the id from the url, which has the key val pair id and the number. when the url is input, you are routed to singleblogs
+    #user = User.query.get(user_Id) #calls the query method on User to get the user associated with that id
+
     blogs = Blog.query.filter_by(submitted=False).all()
-    return render_template('mainBlogPage.html',title="Build a Blog", blogs=blogs)
+    user = User.query.all()
+    return render_template('mainBlogPage.html',title="Build a Blog", blogs=blogs, user=user) # passes user as a param making it available to the html file
 
 @app.route('/addBlogEntry', methods=['POST', 'GET'])
 def addBlogEntry():

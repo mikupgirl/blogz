@@ -10,9 +10,9 @@
             {% for blog in blogs %}
             <h1><a href="singleBlogs?id={{blog.id}}">{{blog.title}}</h1></a>
             <p>{{blog.body}}</p>
+            <p><i>written by <a href="singleBlogs?id={{blog.id}}">{{blog.owner}}</a></i></p>
             <hr />
             {% endfor %}
-
     {% endif %}
 
 
