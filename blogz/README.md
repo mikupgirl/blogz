@@ -8,7 +8,6 @@
 - CSS
 - mySQL database with SQLAlchemy
 - cookie sessions
-- user authentication with hashlib password encryption with salt
 - flash messaging
 
 ***
